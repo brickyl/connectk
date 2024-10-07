@@ -82,6 +82,7 @@ def makeMove(player, col, board):
 def isGameOver(board, k):
 # returns (won or not, the player who won)
 # checks if there are k slots in a row using checkX(board) functions
+# another way to do this could be using - take any element and see if there are 4 adjacent same elements in a line in any direction
     winner = None
     won = False
     horiz = checkHorizontal(board, k)
@@ -131,9 +132,15 @@ def checkVertical(board, k):
         return False, None
 
 def checkDiagonal(board, k):
-# DO THIS LAST
 # checks if there are k slots in a row, on both diagonals
     return False, None
+# check bottom-left to upper-right direction diagonals /
+    # start at the top left corner
+    # go left to right or top to bottom
+    
+# check upper-left to bottom-right direction diagonals \
+    # start at the bottom left corner
+    # go bottom to up
 
 def createBoard(n):
 # create a board of size N * N

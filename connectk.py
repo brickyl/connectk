@@ -133,14 +133,31 @@ def checkVertical(board, k):
 
 def checkDiagonal(board, k):
 # checks if there are k slots in a row, on both diagonals
-    return False, None
+    # return False, None
 # check bottom-left to upper-right direction diagonals /
     # start at the top left corner
-    # go left to right or top to bottom
+    # go left to right 
+    
+    for c in range(len(board[0])):
+        upDiags1 = []  
+        for r in range(c+1):
+            upDiags1.append(board[r][c-r])
+        # print((0, c), upTopDiags)
+    # this isn't figured out yet 
+    # for c in range(len(board) - 1, -1, -1):
+    #     upDiags2 = []
+    #     upDiags2.append(c)
+    #     for r in range(c+1):
+    #         upDiags2.append((r, c-r))
+    #     # for c in range(r, len(board) - r, -1):
+    #     #     upDiags2.append(())
+    #     print((r, len(board)-1), upDiags2)
+    #     # check the upTophalfDiags
+    return False, None
     
 # check upper-left to bottom-right direction diagonals \
     # start at the bottom left corner
-    # go bottom to up
+    # go left to right
 
 def createBoard(n):
 # create a board of size N * N

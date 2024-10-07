@@ -139,25 +139,43 @@ def checkDiagonal(board, k):
     # go left to right 
     
     for c in range(len(board[0])):
-        upDiags1 = []  
+        upDiags1 = [] 
+        currVal = '_'
+        counter = 1
         for r in range(c+1):
             upDiags1.append(board[r][c-r])
-        # print((0, c), upTopDiags)
-    # this isn't figured out yet 
-    # for c in range(len(board) - 1, -1, -1):
-    #     upDiags2 = []
-    #     upDiags2.append(c)
-    #     for r in range(c+1):
-    #         upDiags2.append((r, c-r))
-    #     # for c in range(r, len(board) - r, -1):
-    #     #     upDiags2.append(())
-    #     print((r, len(board)-1), upDiags2)
-    #     # check the upTophalfDiags
-    return False, None
+        # check upDiags for similarity
+        for val in upDiags1:
+            if val != '_' and val == currVal:
+                counter += 1
+                if counter >= k:
+                    return True, currVal
+            else:
+                currVal = val
+                counter = 1
+        
+    for r in range(len(board)):
+        startC = len(board[0]) - 1
+        upDiags2 = []
+        for c in range(startC):
+            if r + c <= len(board) - 1:
+                upDiags2.append(board[r+c][startC-c])
+        # check upDiags for similarity
+        for val in upDiags2:
+            if val != '_' and val == currVal:
+                counter += 1
+                if counter >= k:
+                    return True, currVal
+            else:
+                currVal = val
+                counter = 1
     
 # check upper-left to bottom-right direction diagonals \
     # start at the bottom left corner
     # go left to right
+
+    return False, None
+
 
 def createBoard(n):
 # create a board of size N * N
@@ -187,9 +205,9 @@ def printBoard(board, turnNum):
 def main():
     n = 8 # board size (width and height)
     k = 4 # condition to win
-    # check that N and K are valid (K <= N) if user input used to determine game parameters
-    gameRun(n, k)
-    return
+    # check that N and K are valid (k <= n) if user input used to determine game parameters
+    if k <= n:
+        gameRun(n, k)
 
 if __name__=="__main__":
     main()

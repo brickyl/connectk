@@ -14,7 +14,7 @@ def gameRun(n, k):
         if playerXsTurn:
             player = playerX
         else: player = playerO
-        print("Player", player, "'s turn... Enter a column number from 1 to ", n, ":", sep="")
+        print(player, "'s turn... Enter a column number from 1 to ", n, ":", sep="")
         move = input()
         try:
             move = int(move) - 1
@@ -35,33 +35,31 @@ def gameRun(n, k):
     print("--Game over--")
 
 def isValidMove(move, board):
-# can't play move = 0
 # col is an integer
 # checks if a move is valid... two conditions
 # 1. the column must be valid
 # 2. the column must be open
     n = len(board)
-    print("n:", n)
 
     if move < 0 or move > n - 1:
         print("Only moves from 1 to", n, "are valid. Try again...")
         return False
     else:
-        # BUG: colMax and colCt are for the entire board
         colMax = len(board)
-        colCt = 0
-        for row in board:
-            for col in board:
-                if col == 'X' or col == 'O':
-                    colCt += 1
-        if colCt == colMax:
-            return False
+        for r in range(len(board)):
+            colCt = 0
+            for c in range(len(board[0])):
+                if r == move:
+                    item = board[c][r]
+                    if item == 'X' or item == 'O':
+                        colCt += 1
+            if colCt == colMax:
+                print("This column is full. Try a different column!")
+                return False
     return True
 
 def makeMove(player, col, board):
 # for any given player and a board you can make a move 
-    print("Making move for:", player)
-    print("Column of move:", col)
     if not isValidMove(col, board):
         newMove = input()
         try:

@@ -6,126 +6,152 @@ def gameRun(n, k):
     board = createBoard(n)
     turn = 1
     gameOver = False
+    winner = ""
+
     while(not gameOver):
         print("Turn", turn)
-        printBoard(board, False)
+        printBoard(board, turn)
         if playerXsTurn:
-            print("Player X's turn... Enter a column number from 1 to", n)
-            move = input()
-            if move == "#q" or type(move) != int:
-                print("Goodbye!")
-                return
-            # insufficient safeguarding of type(move)
-            # this should be handled in a function that can call makeMove()
-            if move > n or move < 1:
-                print("Only moves from 1 to", n, "are valid. Try again...")
-                move = input()
-            makeMove(playerX, move, board)
-        else:
-            print("Player O's turn...Enter a column number from 1 to", n)
-            move = input()
-            if move == "#q":
-                print("Goodbye!")
-                return
-            if move > n or move < 1:
-                print("Only moves from 1 to", n, "are valid. Try again... ")
-                move = input()
-            makeMove(playerO, move, board)
-            print("One turn for player: ", playerO)
-                
-        playerXsTurn = not playerXsTurn
-        turn += 1
-        gameOver = isGameOver(board)[0]
-        print("Is game over?", gameOver)
-    print(gameOver)
+            player = playerX
+        else: player = playerO
+        print("Player", player, "'s turn... Enter a column number from 1 to ", n, ":", sep="")
+        move = input()
+        try:
+            move = int(move) - 1
+        except ValueError:
+            print("Goodbye!")
+            return
+        board = makeMove(player, move, board) # changes the behavior to set board =
+        if board == None:
+            return
+        gameOverData = isGameOver(board, k)
+        gameOver = gameOverData[0]
+        winner = gameOverData[1]
+        if not gameOver:
+            playerXsTurn = not playerXsTurn
+            turn += 1
+    printBoard(board, turn)
+    print("The winner is ", winner, ". Congratulations!", sep="")
+    print("--Game over--")
+
+def isValidMove(move, board):
+# can't play move = 0
+# col is an integer
+# checks if a move is valid... two conditions
+# 1. the column must be valid
+# 2. the column must be open
+    n = len(board)
+    print("n:", n)
+
+    if move < 0 or move > n - 1:
+        print("Only moves from 1 to", n, "are valid. Try again...")
+        return False
+    else:
+        # BUG: colMax and colCt are for the entire board
+        colMax = len(board)
+        colCt = 0
+        for row in board:
+            for col in board:
+                if col == 'X' or col == 'O':
+                    colCt += 1
+        if colCt == colMax:
+            return False
+    return True
 
 def makeMove(player, col, board):
 # for any given player and a board you can make a move 
-    # print("Player:", player)
-    # print("Column:", col)
-    # print("Board:", board)
-    
     print("Making move for:", player)
-    print("Move made:", col)
+    print("Column of move:", col)
     if not isValidMove(col, board):
-        # prompt the player to input a new move
-        print("Move is invalid. Col", col, "is full. Try again, player", player)
-        # makeMove(player, col, board)
+        newMove = input()
+        try:
+            newMove = int(newMove) - 1
+        except ValueError:
+            print("Goodbye!")
+            return
+        return makeMove(player, newMove, board) 
     else:
-        # make move logic (change the board)
+        colHeight = 0
+        for r in range(len(board)-1, -1, -1):
+            for c in range(len(board[0])):
+                if c == col and board[r][c] != '_':
+                    colHeight += 1
+        boardHeight = len(board)
+        rowNum = boardHeight - colHeight
+        board[rowNum - 1][col] = player
         return board
 
-def isGameOver(board):
+def isGameOver(board, k):
 # returns (won or not, the player who won)
 # checks if there are k slots in a row using checkX(board) functions
     winner = None
     won = False
-    if (checkHorizontal(board))[0] or (checkVertical(board))[0] or (checkDiagonal(board))[0]:
+    horiz = checkHorizontal(board, k)
+    vert = checkVertical(board, k)
+    diag = checkDiagonal(board, k)
+    if horiz[0] or vert[0] or diag[0]:
         won = True
-        res = [(checkHorizontal(board))[1], (checkVertical(board))[1], (checkDiagonal(board))[1]]
+        res = [horiz[1], vert[1], diag[1]]
         for i in res:
             if i != None:
                 winner = i
-    # why is game over? returns (True, 'O')... because the checks are wrong.
     return won, winner
 
-def checkHorizontal(board):
+def checkHorizontal(board, k):
 # checks if there are k slots in a row, horizontally
-    return False, 'X'
+    for row in board:
+        consecutive = 1
+        currVal = '_'
+        for item in row:
+            if currVal == item:
+                consecutive += 1
+            else:
+                currVal = item
+                consecutive = 1 
+            if consecutive >= k and currVal != '_':
+                return True, currVal
+    else:
+        return False, None
 
-def checkVertical(board):
+
+def checkVertical(board, k):
 # checks if there are k slots in a row, horizontally
     return False, 'O'
 
-def checkDiagonal(board):
+def checkDiagonal(board, k):
+# DO THIS LAST
 # checks if there are k slots in a row, on both diagonals
     return False, None
 
-def isValidMove(col, board):
-# checks if a move is valid
-    return True
-
 def createBoard(n):
 # create a board of size N * N
-    # board = [[n * '_'] * n]
     board = [['_' for i in range(n)] for j in range(n)]
     return board
 
-def printBoard(board, gameEnded):
-# can we identify the winning coordinates and make them capital case when we print the gameEnded board?
-    if not gameEnded:
-        print()
-        print("----- Board -----")
-        for line in board:
-            printableItem = ""
-            for i in range(len(line)):
-                printableItem += line[i]
-                printableItem += " "
-            print(printableItem)
-        xAxis = ""
-        for i in range(1,len(board)+1):
-            xAxis += str(i)
-            xAxis += " "
-        print()
-        print(xAxis)
-        print()
-        print("-----------------")
-        print()
-    else: 
-        print("Not yet developed.")
-    
+def printBoard(board, turnNum):
+    print()
+    print("---- Turn ", turnNum, " ----", sep="")
+    for row in board:
+        printableItem = ""
+        for col in row:
+            printableItem += col
+            printableItem += " "
+        print(printableItem)
+    xAxis = ""
+    for i in range(1,len(board)+1):
+        xAxis += str(i)
+        xAxis += " "
+    print()
+    print(xAxis)
+    print()
+    print("---------------")
+    print()
 
-def testing():
-    # printBoard(createBoard(4), False)
-    # test flow of gameRun
-    gameRun(8, 2)
     
 def main():
-    n = 4 # board size (width and height)
-    k = 2 # condition to win
+    n = 8 # board size (width and height)
+    k = 4 # condition to win
     # check that N and K are valid (K <= N) if user input used to determine game parameters
-    testing()
-    return
     gameRun(n, k)
     return
 

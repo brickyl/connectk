@@ -114,7 +114,21 @@ def checkHorizontal(board, k):
 
 def checkVertical(board, k):
 # checks if there are k slots in a row, horizontally
-    return False, 'O'
+    # return False, 'O'
+    for r in range(len(board)):
+        consecutive = 1
+        currVal = '_'
+        for c in range(len(board[0])):
+            item = board[c][r]
+            if currVal == item:
+                consecutive += 1
+            else:
+                currVal = item
+                consecutive = 1 
+            if consecutive >= k and currVal != '_':
+                return True, currVal
+    else:
+        return False, None
 
 def checkDiagonal(board, k):
 # DO THIS LAST

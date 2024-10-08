@@ -1,5 +1,4 @@
 def gameRun(n, k):
-# handles one instance of game running
     playerX = 'X'
     playerO = 'O'
     playerXsTurn = True
@@ -21,7 +20,7 @@ def gameRun(n, k):
         except ValueError:
             print("Goodbye!")
             return
-        board = makeMove(player, move, board) # changes the behavior to set board =
+        board = makeMove(player, move, board) 
         if board == None:
             return
         gameOverData = isGameOver(board, k)
@@ -115,7 +114,6 @@ def checkHorizontal(board, k):
 
 def checkVertical(board, k):
 # checks if there are k slots in a row, horizontally
-    # return False, 'O'
     for r in range(len(board)):
         consecutive = 1
         currVal = '_'
@@ -133,11 +131,7 @@ def checkVertical(board, k):
 
 def checkDiagonal(board, k):
 # checks if there are k slots in a row, on both diagonals
-    # return False, None
 # check bottom-left to upper-right direction diagonals /
-    # start at the top left corner
-    # go left to right 
-    
     for c in range(len(board[0])):
         upDiags1 = [] 
         currVal = '_'
@@ -171,9 +165,50 @@ def checkDiagonal(board, k):
                 counter = 1
     
 # check upper-left to bottom-right direction diagonals \
-    # start at the bottom left corner
-    # go left to right
+    for r in range(len(board)):
+        coords = []
+        for iterator in range(len(board[0])-r):
+            coords.append((r+iterator, iterator))
 
+        swapped = []
+        currVal = '_'
+        counter = 1
+        for crd in coords:
+            crdR = crd[0]
+            crdC = crd[1]
+            swapped.append((crdC, crdR))
+
+        coordsVals = []
+        swappedVals = []
+        for c in coords:
+            c0 = c[0]
+            c1 = c[1]
+            coordsVals.append(board[c0][c1])
+            
+        for c in swapped:
+            c0 = c[0]
+            c1 = c[1]
+            swappedVals.append(board[c0][c1])
+        
+        for item in coordsVals:
+            if item == currVal and item != '_':
+                counter += 1
+                if counter >= k:
+                    return True, currVal
+            else:
+                currVal = item
+                counter = 1
+
+        currVal = '_'
+        counter = 1
+        for item in swappedVals:
+            if item == currVal and item != '_':
+                counter += 1
+                if counter >= k:
+                    return True, currVal
+            else:
+                currVal = item
+                counter = 1  
     return False, None
 
 
@@ -203,7 +238,7 @@ def printBoard(board, turnNum):
 
     
 def main():
-    n = 8 # board size (width and height)
+    n = 5 # board size (width and height)
     k = 4 # condition to win
     # check that N and K are valid (k <= n) if user input used to determine game parameters
     if k <= n:

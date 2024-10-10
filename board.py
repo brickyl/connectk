@@ -1,12 +1,4 @@
 class Board:
-    def processInput(val):
-        try:
-            val = int(val) - 1
-        except ValueError:
-            print("Goodbye!")
-            return None
-        return val
-    
     def __init__(self, board_size, win_con): 
         self.n = board_size
         self.k = win_con 
